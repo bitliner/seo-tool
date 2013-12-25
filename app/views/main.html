@@ -1,0 +1,94 @@
+<!--<div class="container">-->
+  <div class="row">
+    <h1>Seo tool</h1>
+  </div>
+  <div class="row">
+    <h2>Put html</h2>
+    <!--<div id="inputHtmlTextarea" style="height:300px;overflow:auto;">
+      <pre ng-bind-html="inputHtml"></pre>
+      --><!---->
+      <textarea class="col-md-12" ng-model="inputHtml" ng-change="processHtml(inputHtml)"></textarea>
+
+    <!--</div> <button ng-click="paste()">Paste</button> -->
+    
+  </div>
+
+  
+
+  <div class="row">
+    <button class="col-md-12" ng-click="getOutput()">Get output</button>
+  </div>
+
+  
+  <div class="row" ng-hide="aTags.length==0">
+    
+    <h3>A tags</h3>
+    <table class="table col-md-12">
+      <thead>
+        <tr>
+          <td>Href</td>
+          <td>Title attribute</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="aTag in aTags">
+          <td>{{aTag.href}}</td>
+          <td><input ng-model="aTag.title" ng-change="saveTitle(aTag,'title')"/></td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row" ng-hide="imgTags.length==0">
+    <h3>IMG tags</h3>
+    <table class="table col-md-12">
+      <thead>
+        <tr>
+          <td>Href</td>
+          <td>alt attribute</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="imgTag in imgTags">
+          <td>{{imgTag.src}}</td>
+          <td>
+            <input type="text" ng-model="imgTag.alt"/>
+          </td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row" ng-hide="metaTags.length==0">
+    <h3>META tags</h3>
+    <table class="table col-md-12">
+      <thead>
+        <tr>
+          <td>Name</td>
+          <td>Content</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="metaTag in metaTags">
+          <td>{{metaTag.name}}</td>
+          <td>
+            <textarea ng-model="metaTag.content"></textarea>
+          </td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+
+  <div id="workspace" ></div>
+  <!--<div  >
+    <pre >
+      <code id="workspace"></code>
+    </pre>
+  </div>-->
+
+
+<!-- </div> -->
