@@ -6,11 +6,10 @@ angular.module('seoToolApp')
 	$scope.aTags=[]
 	$scope.imgTags=[]
 	$scope.metaTags=[]
-	var workspace=$('#workspace')
-
 	$scope.tmpCounter=0;
-
 	$scope.output=''
+
+	var htmlContent=''
 
 	var tagNameToAttributes={
 		'img':['src','alt'],
@@ -20,7 +19,9 @@ angular.module('seoToolApp')
 
 	$scope.processHtml=function(inputHtml){
 		var workspace=$('#workspace')
-		workspace.html( $(inputHtml) );
+
+		//workspace.append( $(inputHtml) );
+		htmlContent=$.parseHTML(inputHtml)
 
 		Object.keys(tagNameToAttributes).forEach(function(tagName){
 			$scope[tagName+'Tags']=[]
@@ -32,12 +33,19 @@ angular.module('seoToolApp')
 	function _getTags(tagName){
 		var attributes
 		, tmpTags=[]
-		, workspace=$('#workspace');
+		, workspace=htmlContent;
 
+		
 		attributes=tagNameToAttributes[tagName]
 
+		var elements;
+		if (tagName=='meta'){
+			elements=$(workspace).filter('meta')
+		}else{
+			elements=$(tagName,workspace)
+		}
 
-		$(tagName,workspace).each(function(){
+		elements.each(function(){
 			var id=$scope.tmpCounter
 			, $el=$(this);
 			$scope.tmpCounter++;
@@ -49,16 +57,16 @@ angular.module('seoToolApp')
 			})
 			tmpTags.push(tag)
 		})
-//		console.log(tmpTags);
+		console.log(tagName+'Tags',tmpTags.length);
 		$scope[tagName+'Tags']=tmpTags
 	}
 	$scope.save=function(aTag,attr){
-		var workspace=$('#workspace')
+		var workspace=htmlContent
 		$( '#'+aTag.id, workspace).attr(attr,aTag.title)
 	}
 
 	$scope.getOutput=function(){
-		var workspace=$('#workspace')
+		var workspace=htmlContent
 		$('a,img',workspace).each(function(){
 			$(this).removeAttr('seo-tool-id');
 		})
