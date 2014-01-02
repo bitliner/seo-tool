@@ -9,7 +9,7 @@ angular.module('seoToolApp')
 	$scope.tmpCounter=0;
 	$scope.output=''
 
-	var $$=window.cheerio
+	var cheerio=window.cheerio
 
 	var htmlContent=''
 
@@ -23,8 +23,8 @@ angular.module('seoToolApp')
 		var workspace=$('#workspace')
 
 		//workspace.append( $(inputHtml) );
-		htmlContent=$.parseHTML(inputHtml)
-		htmlContent=$('<div>').append(inputHtml)
+		htmlContent=cheerio.load(inputHtml)
+		//htmlContent=$('<div>').append(inputHtml)
 
 		Object.keys(tagNameToAttributes).forEach(function(tagName){
 			$scope[tagName+'Tags']=[]
@@ -32,7 +32,7 @@ angular.module('seoToolApp')
 		})
 
 		// TODO: if meta tag not contains eywords, description, etc. add them
-		$scope.getOutput()
+		//$scope.getOutput()
 	}
 
 	function _getTags(tagName){
@@ -43,17 +43,15 @@ angular.module('seoToolApp')
 		
 		attributes=tagNameToAttributes[tagName]
 
-		var elements;
-		if (tagName=='meta'){
-			elements=$(workspace).filter('meta')
-		}else{
-			elements=$(tagName,workspace)
-		}
+		var elements=workspace(tagName);
+		console.log('elements',elements);
 
 		elements.each(function(){
 			var id=$scope.tmpCounter
-			, $el=$(this);
+			, $el=cheerio(this);
 			$scope.tmpCounter++;
+
+			console.log('___!',$el,$el.attr('href'));
 			
 			$el.attr('seo-tool-id',id);
 			var tag={id:id}
@@ -62,15 +60,33 @@ angular.module('seoToolApp')
 			})
 			tmpTags.push(tag)
 		})
-		console.log(tagName+'Tags',tmpTags.length);
+		console.log(tagName+'Tags',tmpTags.length,tmpTags);
 		$scope[tagName+'Tags']=tmpTags
 	}
 	
 
 	$scope.getOutput=function(){
-		var workspace=htmlContent
+		var workspace=cheerio.load(htmlContent.html())
 		, output;
-		$('a,img',workspace).each(function(){
+		// itero sugli elementi, etc.
+		Object.keys(tagNameToAttributes).forEach(function(tagName){
+			console.log(tagName);
+			var attributes=tagNameToAttributes[tagName]
+			$scope[tagName+'Tags'].forEach(function(element){
+				attributes.forEach(function(attribute){
+					console.log('each attribute',workspace(tagName+'[seo-tool-id="'+element.id+'"]'));
+					console.log('pait',attribute,element[attribute]);
+					workspace(tagName+'[seo-tool-id="'+element.id+'"]').attr(attribute,element[attribute] )
+
+				})
+				workspace(tagName+'[seo-tool-id="'+element.id+'"]').removeAttr('seo-tool-id')
+				
+			})
+		})
+		//$()
+		console.log('output',workspace.html());
+		$scope.output=workspace.html();
+		/*$('a,img',workspace).each(function(){
 			$(this).removeAttr('seo-tool-id');
 		})
 		var a=$('<div>').append(workspace);
@@ -81,7 +97,7 @@ angular.module('seoToolApp')
 		//console.log('www',output);
 		//$scope.output=output
 		$('#workspace').html(output);
-		
+		*/
 	}
 
 

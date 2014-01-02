@@ -1,13 +1,16 @@
-<!--<div class="container">-->
+<div class="container">
   <div class="row">
     <h1>Seo tool</h1>
   </div>
   <div class="row">
-    <h2>Put html</h2>
+    <!-- <h2>Put html</h2> -->
     <!--<div id="inputHtmlTextarea" style="height:300px;overflow:auto;">
       <pre ng-bind-html="inputHtml"></pre>
-      --><!---->
-      <textarea class="col-md-12" ng-model="inputHtml" ng-change="processHtml(inputHtml)"></textarea>
+      --><!-- -->
+      <div class="col-md-12">
+        <textarea class="col-md-12 form-control" ng-model="inputHtml" ng-change="processHtml(inputHtml)" placeholder="Paste html here"></textarea>
+      </div>
+      
 
     <!--</div> <button ng-click="paste()">Paste</button> -->
     
@@ -15,9 +18,7 @@
 
   
 
-  <div class="row">
-    <button class="col-md-12" ng-click="getOutput()">Get output</button>
-  </div>
+  
 
   
   <div class="row" ng-hide="aTags.length==0">
@@ -32,8 +33,11 @@
       </thead>
       <tbody>
         <tr ng-repeat="aTag in aTags">
-          <td>{{aTag.href}}</td>
-          <td><input ng-model="aTag.title" ng-change="saveTitle(aTag,'title')"/></td>
+          <td>
+            <a href="{{aTag.href}}" target="_blank" ng-show="aTag.href.length >= 35">{{aTag.href|limitTo:35}}...</a>
+            <a href="{{aTag.href}}" target="_blank" ng-show="aTag.href.length < 35">{{aTag.href}}</a>
+          </td>
+          <td><input ng-model="aTag.title" ng-change="saveTitle(aTag,'title')" class="form-control"/></td>
         </tr>
         
       </tbody>
@@ -42,7 +46,8 @@
 
   <div class="row" ng-hide="imgTags.length==0">
     <h3>IMG tags</h3>
-    <table class="table col-md-12">
+    <div class="tablet-responsive">
+      <table class="table col-md-12">
       <thead>
         <tr>
           <td>Href</td>
@@ -51,18 +56,24 @@
       </thead>
       <tbody>
         <tr ng-repeat="imgTag in imgTags">
-          <td>{{imgTag.src}}</td>
           <td>
-            <input type="text" ng-model="imgTag.alt"/>
+            <a ng-href="{{imgTag.src}}" target="_blank" ng-show="imgTag.src.length > 35">{{imgTag.src|limitTo:35}}...</a>
+            <a ng-href="{{imgTag.src}}" target="_blank" ng-show="imgTag.src.length < 35">{{imgTag.src}}</a>
+          </td>
+          <td>
+            <input type="text" ng-model="imgTag.alt" class="form-control"/>
           </td>
         </tr>
         
       </tbody>
     </table>
+    </div>
+    
   </div>
 
   <div class="row" ng-hide="metaTags.length==0">
     <h3>META tags</h3>
+
     <table class="table col-md-12">
       <thead>
         <tr>
@@ -74,7 +85,7 @@
         <tr ng-repeat="metaTag in metaTags">
           <td>{{metaTag.name}}</td>
           <td>
-            <textarea ng-model="metaTag.content"></textarea>
+            <textarea ng-model="metaTag.content" class="form-control"></textarea>
           </td>
         </tr>
         
@@ -82,13 +93,22 @@
     </table>
   </div>
 
+  
 
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn col-md-12" ng-click="getOutput()">GET OUTPUT</button>
+      <br>
+    </div>
+  </div>
 
-  <div  >
-    <pre >
-      <code id="workspace">{{output}}</code>
-    </pre>
+  <div  class="row" ng-show="output.length>0">
+    <div class="col-md-12">
+      <pre class="col-md-12">
+        <code id="workspace" class="col-md-12">{{output}}</code>
+      </pre>
+    </div>
   </div>
 
 
-<!-- </div> -->
+ </div> 
