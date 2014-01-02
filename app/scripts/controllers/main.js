@@ -9,6 +9,8 @@ angular.module('seoToolApp')
 	$scope.tmpCounter=0;
 	$scope.output=''
 
+	var $$=window.cheerio
+
 	var htmlContent=''
 
 	var tagNameToAttributes={
@@ -22,12 +24,15 @@ angular.module('seoToolApp')
 
 		//workspace.append( $(inputHtml) );
 		htmlContent=$.parseHTML(inputHtml)
+		htmlContent=$('<div>').append(inputHtml)
 
 		Object.keys(tagNameToAttributes).forEach(function(tagName){
 			$scope[tagName+'Tags']=[]
 			_getTags(tagName)
 		})
-		
+
+		// TODO: if meta tag not contains eywords, description, etc. add them
+		$scope.getOutput()
 	}
 
 	function _getTags(tagName){
@@ -60,19 +65,41 @@ angular.module('seoToolApp')
 		console.log(tagName+'Tags',tmpTags.length);
 		$scope[tagName+'Tags']=tmpTags
 	}
-	$scope.save=function(aTag,attr){
-		var workspace=htmlContent
-		$( '#'+aTag.id, workspace).attr(attr,aTag.title)
-	}
+	
 
 	$scope.getOutput=function(){
 		var workspace=htmlContent
+		, output;
 		$('a,img',workspace).each(function(){
 			$(this).removeAttr('seo-tool-id');
 		})
-		alert( workspace.html() );
+		var a=$('<div>').append(workspace);
+		console.log('$(workspace)',a.html());
+		output=HtmlEscaper.escape( a.html() )
+		//console.log('workspace',workspace);
+		//console.log('workspace.html()',$(workspace).html());
+		//console.log('www',output);
+		//$scope.output=output
+		$('#workspace').html(output);
+		
 	}
 
+
+	var HtmlEscaper={
+		entityMap : {
+			"&": "&amp;",
+			"<": "&lt;",
+			">": "&gt;",
+			'"': '&quot;',
+			"'": '&#39;',
+			"/": '&#x2F;'
+		},
+		escape:function escapeHtml(string) {
+			return String(string).replace(/[&<>"'\/]/g, function (s) {
+				return HtmlEscaper.entityMap[s];
+			});
+		}
+	}
 	
 
 })
