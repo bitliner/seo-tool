@@ -18,6 +18,7 @@ angular.module('seoToolApp')
 		'a':['href','title'],
 		'meta':['content','name']
 	}
+	var metaTagNameCannotMiss=['keywords','description']
 
 	$scope.processHtml=function(inputHtml){
 		var workspace=$('#workspace')
@@ -26,6 +27,8 @@ angular.module('seoToolApp')
 		htmlContent=cheerio.load(inputHtml)
 		//htmlContent=$('<div>').append(inputHtml)
 
+		_addMissingTags()
+
 		Object.keys(tagNameToAttributes).forEach(function(tagName){
 			$scope[tagName+'Tags']=[]
 			_getTags(tagName)
@@ -33,6 +36,28 @@ angular.module('seoToolApp')
 
 		// TODO: if meta tag not contains eywords, description, etc. add them
 		//$scope.getOutput()
+	}
+
+	function _getNextId(){
+		var id=$scope.tmpCounter
+		$scope.tmpCounter++;
+		return id;
+	}
+
+
+	function _addMissingTags(inputHtml){
+		// for each has to be tag
+		// check if it is in
+		// if it isn't add it
+		var $c=htmlContent;
+		metaTagNameCannotMiss.forEach(function(metaName){
+			var foundElements=$c('meta[name='+metaName+']')
+			//console.log('exist',exist,metaName);
+			if (!foundElements.length){
+				$c('head').append( '<meta name="'+metaName+'" content="" />' )
+			}
+		})
+
 	}
 
 	function _getTags(tagName){
@@ -47,19 +72,36 @@ angular.module('seoToolApp')
 		console.log('elements',elements);
 
 		elements.each(function(){
-			var id=$scope.tmpCounter
+			var id=_getNextId()
 			, $el=cheerio(this);
-			$scope.tmpCounter++;
 
 			console.log('___!',$el,$el.attr('href'));
 			
 			$el.attr('seo-tool-id',id);
 			var tag={id:id}
-			attributes.forEach(function(attrName){
-				tag[attrName]=$el.attr(attrName)
-			})
+			/*
+			if (tagName=='meta'){
+				tag['name']=$el.attr('content')
+			}else{
+			*/
+				attributes.forEach(function(attrName){
+					tag[attrName]=$el.attr(attrName)
+
+				})	
+			//}
+			
 			tmpTags.push(tag)
 		})
+
+		/*if (elements.length==0 && tagName=='meta'){
+			var tag={
+				id: _getNextId()
+			}
+			attributes.forEach(function(attributeName){
+				tag[attributeName]=''
+			})
+			tmpTags.push(tag)
+		}*/
 		console.log(tagName+'Tags',tmpTags.length,tmpTags);
 		$scope[tagName+'Tags']=tmpTags
 	}
